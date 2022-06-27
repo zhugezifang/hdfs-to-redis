@@ -80,7 +80,7 @@ public class HdfsToRedis {
         if (actualQps > (long) requiredQps) {
             System.out.println("=====stop =====");
             try {
-                Thread.sleep(3000);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 System.out.println(e);
             }

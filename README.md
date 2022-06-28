@@ -11,7 +11,7 @@ HDFS-to-Redis 是一个大量数据写入redis的限流工具\
 1.利用spark rdd分区特性，实现高效并行写入缓存，做到耗时短\
 2.对于较大流量数据，控制qps，暂停1s，实现流量控制，避免流量太高，写入redis出现问题
 
-![3439c39c40cd30b36d89847863c691b7](https://user-images.githubusercontent.com/28300167/176102735-d3797f4a-1327-48d7-9e5d-7062d13ab98a.png)
+<img width="607" alt="1656398213969" src="https://user-images.githubusercontent.com/28300167/176110159-fc54ff60-c4ed-49e9-ae52-99d4dc0fadae.png">
 
 
 #### 使用说明

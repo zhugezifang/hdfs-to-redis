@@ -21,4 +21,4 @@ HDFS-to-Redis 是一个大量数据写入redis的限流工具\
 2.redis.port redis 端口信息\
 3.redis.pwd redis 密码信息\
 4.qps 需要控制的qps\
-5.hdfs.input.path 需要写入的数据的路径(以key,value接口进行存储)
+5.hdfs.input.path 需要写入的数据的路径(以key,value形式进行存储)

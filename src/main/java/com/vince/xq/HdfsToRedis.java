@@ -42,6 +42,7 @@ public class HdfsToRedis {
             }
         });
         int partition = result.getNumPartitions();
+        LongAccumulator totalInsert= jsc.sc().longAccumulator("fooCount");
         //System.out.println("par1:" + result.getNumPartitions());
         //result=result.repartition(2);
         //System.out.println("par2:" + result.getNumPartitions());
@@ -60,7 +61,8 @@ public class HdfsToRedis {
                         atomicLong.incrementAndGet();
                         qpsControll(start, requiredQps, atomicLong, it.hashCode());
                         pipeline.sadd(v.getString(0), v.getString(1));
-                        if (atomicLong.get() % 3 == 0) {
+                        totalInsert.add(1L);
+                        if (atomicLong.get() % 1000 == 0) {
                             //每1000条提交一次
                             pipeline.sync();
                         }
@@ -70,6 +72,7 @@ public class HdfsToRedis {
             jedis.close();
         });
         //System.out.println(count.value());
+        System.out.println("======insert count:"+totalInsert.value());
         spark.stop();
     }
 

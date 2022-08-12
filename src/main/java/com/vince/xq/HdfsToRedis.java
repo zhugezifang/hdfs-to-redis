@@ -42,14 +42,13 @@ public class HdfsToRedis {
             }
         });
         int partition = result.getNumPartitions();
-        LongAccumulator totalInsert= jsc.sc().longAccumulator("fooCount");
+        LongAccumulator totalInsert= jsc.sc().longAccumulator("totalInsert");
         //System.out.println("par1:" + result.getNumPartitions());
         //result=result.repartition(2);
         //System.out.println("par2:" + result.getNumPartitions());
-        int requiredQps = totalQps / partition;
+        //int requiredQps = totalQps / partition;
+        Broadcast<Integer> requiredQps = jsc.broadcast(totalQps / partition);
         System.out.println("total:" + result.count());
-
-
         result.foreachPartition(it -> {
             Jedis jedis = RedisInstance.getInstance(properties.getProperty("redis.ip"), Integer.parseInt(properties.getProperty("redis.port")), properties.getProperty("redis.pwd"));
             System.out.println(it.hashCode());
@@ -59,7 +58,7 @@ public class HdfsToRedis {
             it.forEachRemaining(v -> {
                         //System.out.println(v.getString(0)+":"+v.getString(1));
                         atomicLong.incrementAndGet();
-                        qpsControll(start, requiredQps, atomicLong, it.hashCode());
+                        qpsControll(start, requiredQps.getValue().intValue(), atomicLong, it.hashCode());
                         pipeline.sadd(v.getString(0), v.getString(1));
                         totalInsert.add(1L);
                         if (atomicLong.get() % 1000 == 0) {
@@ -81,7 +80,8 @@ public class HdfsToRedis {
         long actualQps = 1000 * count.get() / (System.currentTimeMillis() - start);
         System.out.println(x + ":" + actualQps);
         if (actualQps > (long) requiredQps) {
-            System.out.println("=====stop =====");
+            //LOG.info("[TOTAL] num = {}, QPS = {}, requiredQps = {},x:{}, sleep 1000 ms.", count, actualQps, requiredQps, x);
+            System.out.println("=====stop num:"+count.get()+"qps:"+actualQps+"requiredQps:"+requiredQps+"x:"+x+"sleep 1000ms");
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -92,4 +92,3 @@ public class HdfsToRedis {
 
 
 }
-

@@ -27,6 +27,8 @@ public class HdfsToRedis {
         SparkSession spark = SparkSession.builder()
                 .appName("Spark-to-redis")
                 .master("local")
+                .config("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+                .config("spark.kryo.registrator", "com.vince.xq.MyKryoRegistrator")
                 .getOrCreate();
         String filePath = "src/main/resources/input";
         if (properties.getProperty("hdfs.input.path") != null) {

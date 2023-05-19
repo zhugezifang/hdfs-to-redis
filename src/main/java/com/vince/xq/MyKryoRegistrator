@@ -2,10 +2,11 @@ package com.vince.xq;
 
 import com.esotericsoftware.kryo.Kryo;
 import org.apache.spark.serializer.KryoRegistrator;
+import com.vince.xq.utils.RedisInstance;
 
 public class MyKryoRegistrator implements KryoRegistrator {
   @Override
   public void registerClasses(Kryo kryo) {
-    kryo.register(CouchBaseClientFactory.class);
+    kryo.register(RedisInstance.class);
   }
 }
